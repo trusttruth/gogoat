@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"gogoat/pkg/login"
 	"gogoat/pkg/vul"
 	"net/http"
 )
@@ -15,8 +16,9 @@ func main() {
 	fmt.Println(stringtype) //text/plain; charset=utf-8
 
 	// http.HandleFunc("/test", Test)
-	// http.HandleFunc("/ssrf", Ssrf)
-	// http.HandleFunc("/ping", Ping)
+	http.HandleFunc("/login", login.Login)
+	http.Handle("/ssrf", login.IsLogin(vul.Ssrf))
+	http.HandleFunc("/ping", vul.Pingcmd)
 	http.HandleFunc("/sql1", vul.Sqlxorm)
 	http.HandleFunc("/sql2", vul.Sqlraw)
 	// http.HandleFunc("/upload", upload)
