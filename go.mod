@@ -16,5 +16,6 @@ require (
 require (
 	github.com/BurntSushi/toml v0.3.1 // indirect
 	github.com/andelf/go-curl v0.0.0-20200630032108-fd49ff24ed97 // indirect
+	github.com/gomodule/redigo v1.8.5
 	gopkg.in/yaml.v2 v2.2.2 // indirect
 )

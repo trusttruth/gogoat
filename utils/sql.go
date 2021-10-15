@@ -15,10 +15,11 @@ var X *xorm.Engine
 type User struct {
 	User_id  int64 `xorm:"pk autoincr"`
 	Name     string
-	UserName string
+	Username string
 	Balance  float64
 	Salary   float64
 	Intime   int64
+	Password string
 }
 
 var Config = struct {
@@ -46,7 +47,6 @@ func init() {
 func GetDBconnStr() string {
 	configor.Load(&Config, "pkg/vul/config.yaml")
 	dbcon := Config.DB.User + ":" + Config.DB.Password + "@tcp(" + Config.DB.Host + ":" + Config.DB.Port + ")/" + Config.DB.Name + "?charset=utf8"
-	// x, err = xorm.NewEngine("mysql", "root:123456@tcp(127.0.0.1:3306)/xorm?charset=utf8")
 	return dbcon
 }
 

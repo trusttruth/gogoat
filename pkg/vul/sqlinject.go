@@ -13,9 +13,9 @@ func Sqlraw(w http.ResponseWriter, r *http.Request) {
 	para := r.URL.Query()
 	key := para.Get("key")
 	db := utils.GetRawDBcon()
-	// var sql2 = fmt.Sprintf("select  username  from users where userName= ?") //no vulable
+	// var sql2 = "select  name from user where 	Name= ?" //no vulable
 	var sql2 = fmt.Sprintf("select  name  from user where Name=\"%s\" ", key) //vulable
-	fmt.Println(sql2)
+	// res, err1 := db.Query(sql2, key)
 	res, err1 := db.Query(sql2)
 	fmt.Println(res)
 	if err1 != nil {
@@ -34,7 +34,6 @@ func Sqlraw(w http.ResponseWriter, r *http.Request) {
 		s += name
 	}
 	w.Write([]byte(s))
-
 }
 
 func Sqlxorm(w http.ResponseWriter, r *http.Request) {
