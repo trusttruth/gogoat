@@ -12,7 +12,9 @@ func main() {
 
 	port := flag.String("port", "8888", "listen port")
 	flag.Parse()
+
 	http.HandleFunc("/login", login.JsonLogin)
+	http.HandleFunc("/logout", login.Logout)
 	http.HandleFunc("/", login.JsonLogin)
 	http.HandleFunc("/register", login.Register)
 	http.Handle("/ssrf", login.IsLogin(vul.Ssrf))

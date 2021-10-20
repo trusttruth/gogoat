@@ -2,6 +2,7 @@ package utils
 
 import (
 	"bytes"
+	"context"
 	"crypto"
 	"crypto/md5"
 	"crypto/rand"
@@ -14,8 +15,11 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/gomodule/redigo/redis"
+	// "github.com/gomodule/redigo/redis"
+	"github.com/go-redis/redis/v8"
 )
+
+var ctx = context.Background()
 
 func GetSha256(str string) string {
 	hash := crypto.SHA256.New()
@@ -33,15 +37,22 @@ func GetRandMd5Sum() string {
 	return token
 }
 
-func GetRedisConn() redis.Conn {
-	conn, err := redis.Dial("tcp", "127.0.0.1:6379")
-	if err != nil {
-		fmt.Println("redis dial err")
-		return nil
-	}
+// func GetRedisConn() redis.Conn {
+// 	conn, err := redis.Dial("tcp", "127.0.0.1:6379")
+// 	if err != nil {
+// 		fmt.Println("redis dial err")
+// 		return nil
+// 	}
+// 	return conn
+// }
+func GetRedisConn() *redis.Client {
+	conn := redis.NewClient(&redis.Options{
+		Addr:     "127.0.0.1:6379",
+		Password: "",
+		DB:       0,
+	})
 	return conn
 }
-
 func GetRandString(len int) string {
 	var container string
 	var str = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
@@ -87,10 +98,11 @@ func GetUsername(r *http.Request) string {
 	if sid.Value != "" {
 		redisconn := GetRedisConn()
 		if redisconn == nil {
+			fmt.Println(err.Error())
 			return ""
 		}
 		defer redisconn.Close()
-		v, err := redisconn.Do("get", sid.Value)
+		v, err := redisconn.Get(ctx, sid.Value).Result()
 
 		if err != nil {
 			fmt.Println(err.Error())
@@ -98,7 +110,7 @@ func GetUsername(r *http.Request) string {
 		// fmt.Println(v.(string))
 		// return v.(string)
 		// return "test"
-		return string(v.([]uint8))
+		return v
 	}
 	return ""
 

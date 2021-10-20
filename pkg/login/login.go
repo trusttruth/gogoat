@@ -1,14 +1,18 @@
 package login
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"gogoat/utils"
 	"html/template"
 	"net/http"
+	"time"
 
 	_ "github.com/go-sql-driver/mysql"
 )
+
+var ctx = context.Background()
 
 func checkPass(user, pass string) bool {
 	db := utils.GetRawDBcon()
@@ -48,7 +52,7 @@ func JsonLogin(w http.ResponseWriter, r *http.Request) {
 		// }
 		username := data["username"].(string)
 		password := data["password"].(string)
-		fmt.Println(username, password)
+		// fmt.Println(username, password)
 		if username == "" {
 			w.Write([]byte("pls login"))
 			return
@@ -57,9 +61,8 @@ func JsonLogin(w http.ResponseWriter, r *http.Request) {
 			w.Write([]byte("pls login"))
 			return
 		}
-		sessionid := utils.GetRandString(32)
-
 		if checkPass(username, password) {
+			sessionid := utils.GetRandString(32)
 			sessionCookie := &http.Cookie{
 				Name:     "sessionid",
 				Value:    sessionid,
@@ -68,14 +71,21 @@ func JsonLogin(w http.ResponseWriter, r *http.Request) {
 			http.SetCookie(w, sessionCookie)
 			rediscon := utils.GetRedisConn()
 			if rediscon == nil {
-				fmt.Println("get redis conn err")
+				panic("get redis conn err")
 			}
 			defer rediscon.Close()
-			rediscon.Do("set", sessionid, username, "EX", 3600*2)
+			// rediscon.Do("set", sessionid, username, "EX", 3600*2)
+			err := rediscon.Set(ctx, sessionid, username, 4*time.Hour).Err()
+			if err != nil {
+				fmt.Println(err)
+			}
 			// w.Write([]byte("well come " + username))
 			http.Redirect(w, r, "/home", 200)
 		} else {
-			w.Write([]byte("pls login,like http://127.0.0.1/login?username=admin&password=pass"))
+			// w.Write([]byte("pls login,like http://127.0.0.1/login?username=admin&password=pass"))
+			// http.Redirect(w, r, "/login", 200)
+			t, _ := template.ParseFiles("views/jsonlogin.html")
+			t.Execute(w, "pass or username is not correct!")
 		}
 	}
 }
@@ -106,16 +116,39 @@ func Login(w http.ResponseWriter, r *http.Request) {
 			http.SetCookie(w, sessionCookie)
 			rediscon := utils.GetRedisConn()
 			if rediscon == nil {
-				fmt.Println("get redis conn err")
+				panic("get redis conn err")
 			}
-			defer rediscon.Close()
-			rediscon.Do("set", sessionid, username, "EX", 3600*2)
+			// defer rediscon.Close()
+			// rediscon.Do("set", sessionid, username, "EX", 3600*2)
+			err := rediscon.Set(ctx, sessionid, username, 4*time.Hour).Err()
+			if err != nil {
+				panic(err)
+			}
 			// w.Write([]byte("well come " + username))
 			http.Redirect(w, r, "/home", http.StatusFound)
 		} else {
 			w.Write([]byte("pls login,like http://127.0.0.1/login?username=admin&password=pass"))
 		}
 	}
+}
+func Logout(w http.ResponseWriter, r *http.Request) {
+	v, err := r.Cookie("sessionid")
+	fmt.Println(v.Value)
+	if err != nil {
+		fmt.Println("no found session")
+		return
+	}
+	rediscon := utils.GetRedisConn()
+	if rediscon == nil {
+		panic("get redis conn err")
+	}
+	defer rediscon.Close()
+	err = rediscon.Del(ctx, v.Value).Err()
+	if err != nil {
+		panic(err)
+	}
+	// w.Write([]byte("well come " + username))
+	http.Redirect(w, r, "/home", http.StatusFound)
 }
 
 func IsLogin(f func(http.ResponseWriter, *http.Request)) http.Handler {
@@ -128,15 +161,17 @@ func IsLogin(f func(http.ResponseWriter, *http.Request)) http.Handler {
 		} else {
 			if val.Value != "" {
 				redisconn := utils.GetRedisConn()
+				fmt.Println(redisconn)
 				if redisconn == nil {
 					return
 				}
-				defer redisconn.Close()
-				v, err := redisconn.Do("get", val.Value)
+				// defer redisconn.Close()
+				v, err := redisconn.Get(ctx, val.Value).Result()
+				// v, err := redisconn.Do("get", val.Value)
 				if err != nil {
-					fmt.Println(err.Error())
+					http.Redirect(w, r, "/login", http.StatusFound)
 				}
-				fmt.Println(v)
+				fmt.Println("v = : ", v)
 				f(w, r)
 			} else {
 				// w.Write([]byte("pls login"))
