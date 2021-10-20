@@ -92,13 +92,13 @@ func GetUsername(r *http.Request) string {
 		defer redisconn.Close()
 		v, err := redisconn.Do("get", sid.Value)
 
-		fmt.Println(string(v))
 		if err != nil {
 			fmt.Println(err.Error())
 		}
 		// fmt.Println(v.(string))
 		// return v.(string)
-		return "test"
+		// return "test"
+		return string(v.([]uint8))
 	}
 	return ""
 

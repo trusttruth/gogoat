@@ -2,19 +2,20 @@
 <head>
 <meta charset="utf-8">
 <title>edit profile</title>
+<link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+
 </head>
 <body>
 
-<h1>edit profile</h1>
 <p>
-	<form name="input" method="post" action="/updateProfile" enctype="form-data">
+
+	<h1>hi, {{.}} </h1>
+	<p>pls input what password you want change to</p>
+	<form name="input" method="post" action="/csrf" >
 	<table>
-		<tr>
-			<td>hi, {{.}} username：</td>
-			<td><input type="text" name="username"></td>
-		</tr>
-	</table>
-		<input type="submit" value="Submit">
+				<input type="password" name="newpass01" class="form-control" placeholder="pls input you new pass">
+				<input type="password" name="newpass02" class="form-control" placeholder="pls input you new pass again">
+				<button class="btn btn-lg btn-primary btn-block" >submit</button>
 	</form>
 </p> 
 </body>

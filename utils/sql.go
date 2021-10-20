@@ -50,6 +50,24 @@ func GetDBconnStr() string {
 	return dbcon
 }
 
+func GetUserpassFromDb(username string) string {
+	var pass string
+	_, err := X.Table("user").Where("username = ?", username).Cols("password").Get(&pass)
+	if err != nil {
+		fmt.Println(err)
+		return ""
+	}
+	return pass
+}
+
+func ChangePass(pass, username string) {
+	user := &User{Username: username}
+	ok, _ := X.Get(user)
+	if ok {
+		X.ID(user.User_id).Omit("username").Update(&User{Password: pass})
+	}
+}
+
 func GetRawDBcon() *sql.DB {
 	db, err := sql.Open("mysql", GetDBconnStr())
 	if err != nil {
@@ -57,5 +75,4 @@ func GetRawDBcon() *sql.DB {
 		panic("raw connect db err")
 	}
 	return db
-
 }
