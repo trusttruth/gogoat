@@ -47,9 +47,6 @@ func JsonLogin(w http.ResponseWriter, r *http.Request) {
 		body := r.Body
 		data := make(map[string]interface{})
 		json.NewDecoder(body).Decode(&data)
-		// for key, value := range data {
-		// 	log.Println("key:", key, " => value :", value)
-		// }
 		username := data["username"].(string)
 		password := data["password"].(string)
 		// fmt.Println(username, password)
