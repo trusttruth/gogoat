@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>login in</title>
+    <!-- <link rel="stylesheet" href="./layui.css"> -->
+    <link rel="stylesheet" href="https://unpkg.com/layui@2.6.8/dist/css/layui.css">
+</head>
+
+<body>
+    <p>{{.}}</p>
+    <form class="layui-form">
+        <div class="layui-form-item">
+            <label class="layui-form-label">username</label>
+            <div class="layui-input-inline">
+                <input type="text" name="username" required lay-verify="required" placeholder="pls input username"
+                    autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">password</label>
+            <div class="layui-input-inline">
+                <input type="password" name="password" required lay-verify="required" placeholder="pls input password"
+                    autocomplete="off" class="layui-input">
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block>
+                    <button class=" layui-btn" lay-submit lay-filter="formDemo" type="submit">login in</button>
+                    <button type="reset" class="layui-btn layui-btn-primary">reset</button>
+                    <a class="layui-btn layui-btn-primary" href="/register">login up</a>
+                </div>
+            </div>
+    </form>
+
+    <!-- <script src="./layui.js"></script> -->
+    <script src="https://unpkg.com/layui@2.6.8/dist/layui.js"></script>
+    <script>
+        layui.use(['layer', 'form'], function () {
+            var layer = layui.layer
+                , form = layui.form
+                , $ = layui.$;
+            form.on('submit(formDemo)', function (data) {
+                var d = JSON.stringify(data.field);
+                $.ajax({
+                    url: "/login"
+                    , data: d
+                    , type: "POST"
+                    , contentType: 'application/json'
+                    , dataType: "json"
+                    , success: function (data) {
+                        alert(12);
+                        if (data.status == "200") {
+                            layer.open({
+                                title: 'ok'
+                                , content: 'ok'
+                            })
+                        } else if (data.status === "301") {
+                            layer.open({
+                                title: '提示'
+                                , content: "用户名已存在"
+                            });
+                            return false;
+                        }
+                        else {
+                            layer.open({
+                                title: '提示'
+                                , content: "请求错误，请联系管理员"
+                            });
+                            return false;
+                        }
+                    }
+                    , error: function (xhr, error) {
+                        console.debug(xhr); console.debug(error);
+                    },
+                });
+                return false;
+                // window.location.reload()
+            });
+            $(document).ajaxComplete(function () {
+                window.location = "/home"
+            });
+        });
+
+
+    </script>
+</body>
+
+</html>

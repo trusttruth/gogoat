@@ -42,9 +42,11 @@ func checkPass(user, pass string) bool {
 func JsonLogin(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
 		t, _ := template.ParseFiles("views/jsonlogin.html")
+		fmt.Println(t)
 		t.Execute(w, nil)
 	} else {
 		body := r.Body
+		fmt.Println(body)
 		data := make(map[string]interface{})
 		json.NewDecoder(body).Decode(&data)
 		username := data["username"].(string)
@@ -61,9 +63,9 @@ func JsonLogin(w http.ResponseWriter, r *http.Request) {
 		if checkPass(username, password) {
 			sessionid := utils.GetRandString(32)
 			sessionCookie := &http.Cookie{
-				Name:     "sessionid",
-				Value:    sessionid,
-				HttpOnly: true,
+				Name:  "sessionid",
+				Value: sessionid,
+				// HttpOnly: true,
 			}
 			http.SetCookie(w, sessionCookie)
 			rediscon := utils.GetRedisConn()
@@ -77,11 +79,11 @@ func JsonLogin(w http.ResponseWriter, r *http.Request) {
 				fmt.Println(err)
 			}
 			// w.Write([]byte("well come " + username))
-			http.Redirect(w, r, "/home", 200)
+			http.Redirect(w, r, "/home", http.StatusFound)
 		} else {
 			// w.Write([]byte("pls login,like http://127.0.0.1/login?username=admin&password=pass"))
 			// http.Redirect(w, r, "/login", 200)
-			t, _ := template.ParseFiles("views/jsonlogin.html")
+			t, _ := template.ParseFiles("views/layui.html")
 			t.Execute(w, "pass or username is not correct!")
 		}
 	}

@@ -1,52 +1,60 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>login</title>
-    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
-</head>
- 
-<script>
-  $(document).ready(function(){
-    $("button").click(function(){
-    $.ajax({   
-      contentType: 'application/json',
-      type: 'POST',
-      url: "/login",
-      dataType: "json",
-      data: JSON.stringify(GetJson()),
-      success: function (message) {
-      }
-    });
-  });
-  $(document).ajaxComplete(function(){
-    window.location = "/home"
-  });
 
-  function GetJson() {
-        var json = {	
-          "username":$("#Username").val(), 
-          "password":$("#Password").val()
-        };
-        return json;
-      }
-    });
-</script>
-<body>
- 
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>gogoat</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css">
 </head>
+
+
+
 <body>
-  <h1>{{.}}</h1>
-  <div class="container">
-    <form class="form-signin" >
-      <a href ="/register">sign up</a></h2>
-      <input type="text" id="Username" class="form-control" placeholder="username" required autofocus>
-      <input type="password" id="Password" class="form-control" placeholder="password" required>
-      <button  type= "button" class="btn btn-lg btn-primary btn-block" >Sign in</button>
-    </form>
-  </div>
-<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-</body>
+
+  </head>
+
+  <body>
+    <h1>{{.}}</h1>
+    <div class="container">
+      <form class="form-signin  form-horizontal">
+        <!-- <a href ="/register">sign up</a></h2> -->
+        <input type="text" id="Username" class="form-control" placeholder="username" required autofocus>
+        <input type="password" id="Password" class="form-control" placeholder="password" required>
+        <div class="form-group">
+          <button type="button" class="btn  btn-primary ">Sign in</button>
+          <a type="button" class="btn  btn-primary" href="/register">Sign up</a>
+        </div>
+      </form>
+    </div>
+
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      $(document).ready(function () {
+        $("button").click(function () {
+          $.ajax({
+            contentType: 'application/json',
+            type: 'POST',
+            url: "/login",
+            dataType: "json",
+            data: JSON.stringify(GetJson()),
+            success: function (message) {
+            }
+          });
+        });
+        $(document).ajaxComplete(function () {
+          window.location = "/home"
+        });
+        function GetJson() {
+          var json = {
+            "username": $("#Username").val(),
+            "password": $("#Password").val()
+          };
+          return json;
+        }
+      });
+    </script>
+  </body>
+
 </html>

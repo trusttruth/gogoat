@@ -10,7 +10,8 @@ import (
 
 func main() {
 
-	port := flag.String("port", "8888", "listen port")
+	port := flag.String("p", "8888", "listen port")
+	host := flag.String("h", "127.0.0.1", "listen port")
 	flag.Parse()
 
 	http.HandleFunc("/login", login.JsonLogin)
@@ -25,8 +26,10 @@ func main() {
 	http.Handle("/upload", login.IsLogin(vul.Upload))
 	http.Handle("/reflectXss", login.IsLogin(vul.ReflectXss))
 	http.Handle("/csrf", login.IsLogin(vul.ChangePass))
+	http.Handle("/cors", login.IsLogin(vul.Profile))
 
-	addr := "127.0.0.1:" + *port
+	addr := *host + ":" + *port
+	// addr := "127.0.0.1:" + *port
 	fmt.Println("App where be runing on " + addr)
 	err := http.ListenAndServe(addr, nil)
 
