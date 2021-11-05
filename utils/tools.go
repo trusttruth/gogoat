@@ -16,7 +16,12 @@ import (
 	"time"
 
 	// "github.com/gomodule/redigo/redis"
+	"database/sql"
+
 	"github.com/go-redis/redis/v8"
+	"github.com/jinzhu/configor"
+
+	_ "github.com/go-sql-driver/mysql"
 )
 
 var ctx = context.Background()
@@ -131,4 +136,37 @@ func Validate(inter interface{}, tp string) bool {
 		return false
 	}
 	return false
+}
+
+func GetDBconnStr() string {
+	configor.Load(&Config, "pkg/vul/config.yaml")
+	dbcon := Config.DB.User + ":" + Config.DB.Password + "@tcp(" + Config.DB.Host + ":" + Config.DB.Port + ")/" + Config.DB.Name + "?charset=utf8"
+	return dbcon
+}
+
+func GetUserpassFromDb(username string) string {
+	var pass string
+	_, err := X.Table("user").Where("username = ?", username).Cols("password").Get(&pass)
+	if err != nil {
+		fmt.Println(err)
+		return ""
+	}
+	return pass
+}
+
+func ChangePass(pass, username string) {
+	user := &User{Username: username}
+	ok, _ := X.Get(user)
+	if ok {
+		X.ID(user.Id).Omit("username").Update(&User{Password: pass})
+	}
+}
+
+func GetRawDBcon() *sql.DB {
+	db, err := sql.Open("mysql", GetDBconnStr())
+	if err != nil {
+		fmt.Println("raw connect db err")
+		panic("raw connect db err")
+	}
+	return db
 }
