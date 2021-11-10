@@ -14,29 +14,39 @@ type userprofile struct {
 	Address  string
 }
 
-func Profile(w http.ResponseWriter, r *http.Request) {
+type Usert struct {
+	Username string
+	Address  string
+}
+
+func UserInfo(w http.ResponseWriter, r *http.Request) {
 	h := r.Header.Get("Origin")
+
 	w.Header().Set("Access-Control-Allow-Origin", h)
 	w.Header().Set("Access-Control-Allow-Credentials", "true")
 	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
 	w.Header().Set("content-type", "application/json")
-	// if r.Method == "OPTIONS" {
-	// 	// fmt.Println("OPTIONS")
-	// 	w.WriteHeader(http.StatusOK)
-	// 	return
-	// }
-
 	username := utils.GetUsername(r)
 	user := &utils.User{Username: username}
-	ok, _ := utils.X.Get(user)
-	if ok {
-		fmt.Println(user)
+	ok, err := utils.X.Get(user)
+	if !ok {
+		w.Write([]byte("not find user"))
+		return
 	}
-	profile := &userprofile{Username: username}
-	profile.Address = user.Address
-	profile.Age = user.Age
-	profile.Message = user.Message
-	v, _ := json.Marshal(profile)
+	if err != nil {
+		w.Write([]byte("not find user"))
+		return
+	}
 
+	profile := &userprofile{}
+
+	err = utils.TranStruct(user, profile)
+	if err != nil {
+		fmt.Println(err.Error())
+		w.Write([]byte("system err,pls contact admin !"))
+		return
+	}
+
+	v, _ := json.Marshal(profile)
 	w.Write([]byte(v))
 }

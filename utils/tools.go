@@ -7,6 +7,7 @@ import (
 	"crypto/md5"
 	"crypto/rand"
 	"encoding/hex"
+	"encoding/json"
 	"fmt"
 	"io"
 	"math/big"
@@ -112,9 +113,6 @@ func GetUsername(r *http.Request) string {
 		if err != nil {
 			fmt.Println(err.Error())
 		}
-		// fmt.Println(v.(string))
-		// return v.(string)
-		// return "test"
 		return v
 	}
 	return ""
@@ -169,4 +167,19 @@ func GetRawDBcon() *sql.DB {
 		panic("raw connect db err")
 	}
 	return db
+}
+
+//tran struct src to struct dst
+func TranStruct(src interface{}, dst interface{}) error {
+	s1, err := json.Marshal(src)
+	if err != nil {
+		return err
+	}
+	fmt.Println(string(s1))
+	err = json.Unmarshal(s1, dst)
+	fmt.Println(dst)
+	if err != nil {
+		return err
+	}
+	return nil
 }

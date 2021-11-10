@@ -8,9 +8,12 @@
 <h2>{{.}}</h2>
 <div class="container">
 	<form name="input" method="post" action="/register" enctype="form-data">
-			<td><input type="text" class="form-control" placeholder="uasename" name="username"></td>
-			<td><input type="password" class="form-control"  placeholder="password" name="password1"></td>
-			<td><input type="password" class="form-control" placeholder="reinput password" name="password2"></td>
+			<td><input type="text" class="form-control" required placeholder="input username,it will used for login" name="username"></td>
+			<td><input type="text" class="form-control" required placeholder="input your address" name="address"></td>
+			<td><input type="text" class="form-control" required placeholder="Please enter your favorite celebrity quotes" name="message"></td>
+			<td><input type="text" class="form-control" required placeholder="Please enter your age" name="age"></td>
+			<td><input type="password" class="form-control"  required placeholder="password" name="password1"></td>
+			<td><input type="password" class="form-control" required placeholder="reinput password" name="password2"></td>
 		<button class="btn btn-lg btn-primary btn-block" >submit</button>
 	</form>
 </div>

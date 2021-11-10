@@ -4,7 +4,8 @@ import (
 	"log"
 
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/go-xorm/xorm"
+	"xorm.io/xorm"
+	// "github.com/go-xorm/xorm"
 )
 
 var X *xorm.Engine
@@ -17,6 +18,7 @@ type User struct {
 	Message  string
 	Address  string
 	Age      int64
+	IsAdmin  bool `xorm:"default false"`
 }
 
 var Config = struct {

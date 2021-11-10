@@ -42,11 +42,11 @@ func checkPass(user, pass string) bool {
 func JsonLogin(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
 		t, _ := template.ParseFiles("views/jsonlogin.html")
-		fmt.Println(t)
+		// fmt.Println(t)
 		t.Execute(w, nil)
 	} else {
 		body := r.Body
-		fmt.Println(body)
+		// fmt.Println(body)
 		data := make(map[string]interface{})
 		json.NewDecoder(body).Decode(&data)
 		username := data["username"].(string)
@@ -67,7 +67,12 @@ func JsonLogin(w http.ResponseWriter, r *http.Request) {
 				Value: sessionid,
 				// HttpOnly: true,
 			}
+			usercookie := &http.Cookie{
+				Name:  "username",
+				Value: username,
+			}
 			http.SetCookie(w, sessionCookie)
+			http.SetCookie(w, usercookie)
 			rediscon := utils.GetRedisConn()
 			if rediscon == nil {
 				panic("get redis conn err")
@@ -112,7 +117,12 @@ func Login(w http.ResponseWriter, r *http.Request) {
 				Value:    sessionid,
 				HttpOnly: true,
 			}
+			usercookie := &http.Cookie{
+				Name:  "username",
+				Value: username,
+			}
 			http.SetCookie(w, sessionCookie)
+			http.SetCookie(w, usercookie)
 			rediscon := utils.GetRedisConn()
 			if rediscon == nil {
 				panic("get redis conn err")
@@ -132,7 +142,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 }
 func Logout(w http.ResponseWriter, r *http.Request) {
 	v, err := r.Cookie("sessionid")
-	fmt.Println(v.Value)
+	// fmt.Println(v.Value)
 	if err != nil {
 		fmt.Println("no found session")
 		return
@@ -160,17 +170,17 @@ func IsLogin(f func(http.ResponseWriter, *http.Request)) http.Handler {
 		} else {
 			if val.Value != "" {
 				redisconn := utils.GetRedisConn()
-				fmt.Println(redisconn)
+				// fmt.Println(redisconn)
 				if redisconn == nil {
 					return
 				}
 				// defer redisconn.Close()
-				v, err := redisconn.Get(ctx, val.Value).Result()
+				_, err := redisconn.Get(ctx, val.Value).Result()
 				// v, err := redisconn.Do("get", val.Value)
 				if err != nil {
 					http.Redirect(w, r, "/login", http.StatusFound)
 				}
-				fmt.Println("v = : ", v)
+				// fmt.Println("v = : ", v)
 				f(w, r)
 			} else {
 				// w.Write([]byte("pls login"))
@@ -183,5 +193,5 @@ func IsLogin(f func(http.ResponseWriter, *http.Request)) http.Handler {
 
 func Home(w http.ResponseWriter, r *http.Request) {
 	t, _ := template.ParseFiles("views/boothome.html")
-	t.Execute(w, nil)
+	t.Execute(w, utils.GetUsername(r))
 }

@@ -16,8 +16,8 @@ func main() {
 
 	http.HandleFunc("/login", login.JsonLogin)
 	http.HandleFunc("/logout", login.Logout)
-	http.HandleFunc("/", login.JsonLogin)
 	http.HandleFunc("/register", login.Register)
+	http.HandleFunc("/", login.JsonLogin)
 	http.Handle("/ssrf", login.IsLogin(vul.Ssrf))
 	http.Handle("/home", login.IsLogin(login.Home))
 	http.Handle("/ping", login.IsLogin(vul.Pingcmd))
@@ -26,7 +26,8 @@ func main() {
 	http.Handle("/upload", login.IsLogin(vul.Upload))
 	http.Handle("/reflectXss", login.IsLogin(vul.ReflectXss))
 	http.Handle("/csrf", login.IsLogin(vul.ChangePass))
-	http.Handle("/cors", login.IsLogin(vul.Profile))
+	http.Handle("/cors", login.IsLogin(vul.UserInfo))
+	http.Handle("/idor", login.IsLogin(vul.Profile))
 
 	addr := *host + ":" + *port
 	// addr := "127.0.0.1:" + *port

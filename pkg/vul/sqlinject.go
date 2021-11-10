@@ -36,18 +36,42 @@ func Sqlraw(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(s))
 }
 
+// func Sqlxorm(w http.ResponseWriter, r *http.Request) {
+// 	para := r.URL.Query()
+// 	key := para.Get("key")
+// 	var user []utils.User
+// 	// var users = new(utils.User)
+// 	// err1 := x.Table("user1").Where("name = ?", key).Find(&user)  novulable!
+// 	err2 := utils.X.Table("user").Where("username = \"" + key + "\"").Find(&user) //vulable
+// 	// _, err2 := utils.X.Table("user").Sum(users, key) //vulable
+// 	// _, err2 := utils.X.Table("user").Sum(users, "User_id`),0)from`user`where`User_id`>'0'#")
+// 	if err2 != nil {
+// 		fmt.Println(err2)
+// 		w.Write([]byte(err2.Error()))
+// 	}
+// 	s := "you name is : \n"
+// 	for i := 0; i < len(user); i++ {
+// 		fmt.Println(user[i].Username)
+// 		s += user[i].Username
+// 		s += "\n"
+// 	}
+// 	w.Write([]byte(s))
+// }
+
 func Sqlxorm(w http.ResponseWriter, r *http.Request) {
 	para := r.URL.Query()
 	key := para.Get("key")
+	fmt.Println("key= " + key)
 	var user []utils.User
 	// var users = new(utils.User)
 	// err1 := x.Table("user1").Where("name = ?", key).Find(&user)  novulable!
-	err2 := utils.X.Table("user").Where("username = \"" + key + "\"").Find(&user) //vulable
-	// _, err2 := utils.X.Table("user").Sum(users, key) //vulable
-	// _, err2 := utils.X.Table("user").Sum(users, "User_id`),0)from`user`where`User_id`>'0'#")
+	// err2 := utils.X.Table("user").Where("username = \"" + key + "\"").Find(&user) //vulable
+	// _, err2 = utils.X.Table("user").Sum(users, key) //vulable
+	err2 := utils.X.GroupBy(key).Find(&user) //vulable
 	if err2 != nil {
 		fmt.Println(err2)
 		w.Write([]byte(err2.Error()))
+		return
 	}
 	s := "you name is : \n"
 	for i := 0; i < len(user); i++ {
