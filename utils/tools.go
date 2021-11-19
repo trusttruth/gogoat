@@ -169,15 +169,25 @@ func GetRawDBcon() *sql.DB {
 	return db
 }
 
+func Clearcomment(w http.ResponseWriter, r *http.Request) {
+	sql := "truncate  TABLE  message;"
+	_, err := X.Exec(sql)
+	if err != nil {
+		fmt.Println(err)
+	}
+	return
+
+}
+
 //tran struct src to struct dst
 func TranStruct(src interface{}, dst interface{}) error {
 	s1, err := json.Marshal(src)
 	if err != nil {
 		return err
 	}
-	fmt.Println(string(s1))
+	// fmt.Println(string(s1))
 	err = json.Unmarshal(s1, dst)
-	fmt.Println(dst)
+	// fmt.Println(dst)
 	if err != nil {
 		return err
 	}

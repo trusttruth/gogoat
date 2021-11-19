@@ -21,6 +21,12 @@ type User struct {
 	IsAdmin  bool `xorm:"default false"`
 }
 
+type Message struct {
+	Username string
+	Name     string
+	Message  string
+}
+
 var Config = struct {
 	DB struct {
 		Name     string
@@ -38,6 +44,9 @@ func init() {
 		log.Fatal("database connect err:", err)
 	}
 	if err := X.Sync(new(User)); err != nil {
+		log.Fatal("database sync err:", err)
+	}
+	if err := X.Sync(new(Message)); err != nil {
 		log.Fatal("database sync err:", err)
 	}
 	X.ShowSQL(true)

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>gogoat</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css">
+</head>
+
+
+
+<body>
+
+  </head>
+
+  <body>
+    {{template "front.html" .}}
+    <p class="text-info">you can put you comments, but we will drop it!!</p>
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      $(document).ready(function () {
+        $("#btnsub").click(function () {
+          $.ajax({
+            contentType: 'application/json',
+            type: 'POST',
+            url: "/storexss",
+            dataType: "json",
+            data: JSON.stringify(GetJson()),
+            success: function (d) {
+              var $comments= $("#comments");
+              var strHtml = "";
+              $comments.empty();
+              $.each(d, function (infoIndex, info) {
+                // alert(info) ;
+                strHtml += "name：" + info["Name"] + "<br>";
+                strHtml += "comments：" + info["Message"] + "<br>";
+                strHtml += "<hr>"
+              })
+              $comments.html(strHtml);
+              $("#txtName").val("")  
+              $("#mtxMessage").val("")
+
+            }
+          });
+        });
+        $("#btnclr").click(function () {
+          $.ajax({
+            contentType: 'application/json',
+            type: 'GET',
+            url: "/clearcomment",
+            success: function (d) {
+            }
+          });
+          $("#comments").html("")
+
+
+        });
+        function GetJson() {
+          var json = {
+            "name": $("#txtName").val(),
+            "message": $("#mtxMessage").val()
+          };
+          return json;
+        }
+      });
+    </script>
+
+    <div class="vulnerable_code_area">
+        <table width="550" border="0" cellpadding="2" cellspacing="1">
+          <tbody>
+            <tr>
+              <td width="100">Name *</td>
+              <td><input name="txtName" id="txtName" type="text" required class="form-control" size="30" maxlength="10"></td>
+            </tr>
+            <tr>
+              <td width="100">Message *</td>
+              <td><textarea name="mtxMessage" id="mtxMessage" cols="50"   required class="form-control" rows="3" maxlength="50"></textarea></td>
+            </tr>
+            <tr>
+              <td width="100"></td>
+              <td><button name="btnSign"  class="btn btn-info" id="btnsub"  type="button"  onclick="return">submit</button>
+                <button    id="btnclr"  class="btn btn-info" type="button"  onclick="return">clear</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </form>
+
+    </div>
+    <div id="comments">
+
+    </div>
+
+  </body>
+
+
+</html>

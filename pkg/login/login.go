@@ -192,6 +192,11 @@ func IsLogin(f func(http.ResponseWriter, *http.Request)) http.Handler {
 }
 
 func Home(w http.ResponseWriter, r *http.Request) {
-	t, _ := template.ParseFiles("views/boothome.html")
-	t.Execute(w, utils.GetUsername(r))
+	// t, _ := template.ParseFiles("views/boothome.html")
+	t, err := template.ParseFiles("views/boothome.html", "views/front.html")
+	if err != nil {
+		fmt.Println(err)
+	}
+	t.Execute(w, template.HTML(utils.GetUsername(r)))
+	// t.Execute(w, utils.GetUsername(r))
 }
