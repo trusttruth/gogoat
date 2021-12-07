@@ -8,10 +8,12 @@ import (
 )
 
 type userprofile struct {
-	Username string
-	Message  string
-	Age      int64
-	Address  string
+	Username string  `json:"username"`
+	Message  string  `json:"message"`
+	Age      int64   `json:"age"`
+	Address  string  `json:"address"`
+	Account  string  `json:"account"`
+	Amount   float64 `json:"amount"`
 }
 
 type Usert struct {

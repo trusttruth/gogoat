@@ -137,7 +137,8 @@ func Validate(inter interface{}, tp string) bool {
 }
 
 func GetDBconnStr() string {
-	configor.Load(&Config, "pkg/vul/config.yaml")
+	configor.Load(&Config, "./config.yaml")
+	// configor.Load(&Config, "pkg/vul/config.yaml")
 	dbcon := Config.DB.User + ":" + Config.DB.Password + "@tcp(" + Config.DB.Host + ":" + Config.DB.Port + ")/" + Config.DB.Name + "?charset=utf8"
 	return dbcon
 }

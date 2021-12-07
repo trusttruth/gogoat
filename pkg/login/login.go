@@ -39,25 +39,42 @@ func checkPass(user, pass string) bool {
 	return false
 }
 
+func Pass(w http.ResponseWriter, r *http.Request) {
+	return
+}
+
 func JsonLogin(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
 		t, _ := template.ParseFiles("views/jsonlogin.html")
 		// fmt.Println(t)
 		t.Execute(w, nil)
-	} else {
+	} else if r.Method == "POST" {
+		loginsuccess := &utils.LoginStatus{}
+		loginfail := &utils.LoginStatus{}
+		loginfail.Err = "login fail"
+		loginfail.Success = false
 		body := r.Body
 		// fmt.Println(body)
 		data := make(map[string]interface{})
 		json.NewDecoder(body).Decode(&data)
+
+		if _, ok := data["username"]; !ok {
+			return
+		}
+		if _, ok := data["password"]; !ok {
+			return
+		}
 		username := data["username"].(string)
 		password := data["password"].(string)
 		// fmt.Println(username, password)
-		if username == "" {
-			w.Write([]byte("pls login"))
-			return
-		}
-		if password == "" {
-			w.Write([]byte("pls login"))
+		if username == "" || password == "" {
+
+			s, err := json.Marshal(loginfail)
+			if err != nil {
+				fmt.Println(err)
+			}
+
+			w.Write(s)
 			return
 		}
 		if checkPass(username, password) {
@@ -71,6 +88,17 @@ func JsonLogin(w http.ResponseWriter, r *http.Request) {
 				Name:  "username",
 				Value: username,
 			}
+			admincookie := &http.Cookie{
+				Name:  "admin",
+				Value: "1",
+			}
+			if username == "admin" {
+				http.SetCookie(w, admincookie)
+			} else {
+				admincookie.Value = "0"
+				http.SetCookie(w, admincookie)
+			}
+
 			http.SetCookie(w, sessionCookie)
 			http.SetCookie(w, usercookie)
 			rediscon := utils.GetRedisConn()
@@ -83,13 +111,26 @@ func JsonLogin(w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				fmt.Println(err)
 			}
-			// w.Write([]byte("well come " + username))
-			http.Redirect(w, r, "/home", http.StatusFound)
+			loginsuccess.Err = "0"
+			loginsuccess.Success = true
+			s, err := json.Marshal(loginsuccess)
+			if err != nil {
+				return
+			}
+			w.Write(s)
+			return
+			// http.Redirect(w, r, "/home", http.StatusFound)
 		} else {
 			// w.Write([]byte("pls login,like http://127.0.0.1/login?username=admin&password=pass"))
 			// http.Redirect(w, r, "/login", 200)
-			t, _ := template.ParseFiles("views/layui.html")
-			t.Execute(w, "pass or username is not correct!")
+			// t, _ := template.ParseFiles("views/layui.html")
+			// t.Execute(w, "pass or username is not correct!")
+			s, err := json.Marshal(loginfail)
+			if err != nil {
+				return
+			}
+			w.Write(s)
+			return
 		}
 	}
 }

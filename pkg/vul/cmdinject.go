@@ -10,7 +10,9 @@ func Pingcmd(w http.ResponseWriter, r *http.Request) {
 	target := ping.Get("ip")
 	testStr := "ping -c 2 " + target
 	// fmt.Println(testStr)
+	res := "the command is: " + testStr
+
 	testres, _ := exec.Command("sh", "-c", testStr).Output()
-	w.Write(testres)
+	w.Write([]byte(res + "\n" + string(testres)))
 
 }

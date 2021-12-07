@@ -78,7 +78,9 @@ func Comment(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		// t, _ := template.ParseFiles("views/profile.html")
-		// t.Execute(w, v)
+		// t, err := template.New("foo").Parse(`{{define "T"}}Hello, {{.}}!{{end}}`)
+		// err = t.ExecuteTemplate(w, "T", template.HTML("<script>alert('you have been pwned')</script>"))
+		// t.Execute(w, template.html(v))
 		w.Write(v)
 		return
 	}

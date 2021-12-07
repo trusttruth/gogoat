@@ -40,12 +40,18 @@
             dataType: "json",
             data: JSON.stringify(GetJson()),
             success: function (message) {
+              if (message["Success"] == true) {
+                window.location = "/home"
+              }else{
+                 alert(message["Err"]) 
+              }
+
             }
           });
         });
-        $(document).ajaxComplete(function () {
-          window.location = "/home"
-        });
+        // $(document).ajaxComplete(function () {
+        //   window.location = "/home"
+        // });
         function GetJson() {
           var json = {
             "username": $("#Username").val(),

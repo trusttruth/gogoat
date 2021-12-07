@@ -19,8 +19,9 @@ func main() {
 	http.HandleFunc("/logout", login.Logout)
 	http.HandleFunc("/register", login.Register)
 	http.HandleFunc("/", login.JsonLogin)
-	http.HandleFunc("/home", (login.Home))
-	// http.Handle("/home", login.IsLogin(login.Home))
+	http.HandleFunc("/favicon.ico", login.Pass)
+	// http.HandleFunc("/home", (login.Home))
+	http.Handle("/home", login.IsLogin(login.Home))
 
 	///vullist
 	http.Handle("/ssrf", login.IsLogin(vul.Ssrf))
@@ -31,11 +32,10 @@ func main() {
 	http.Handle("/reflectXss", login.IsLogin(vul.ReflectXss))
 	http.Handle("/csrf", login.IsLogin(vul.ChangePass))
 	http.Handle("/cors", login.IsLogin(vul.UserInfo))
-	http.Handle("/idor", login.IsLogin(vul.Profile))
+	http.Handle("/userinfo", login.IsLogin(vul.Profile))
 	http.Handle("/storexss", login.IsLogin(vul.Comment))
 
 	///other handle
-
 	http.Handle("/clearcomment", login.IsLogin(utils.Clearcomment))
 	addr := *host + ":" + *port
 	// addr := "127.0.0.1:" + *port
@@ -45,5 +45,4 @@ func main() {
 	if err != nil {
 		fmt.Println(err)
 	}
-
 }

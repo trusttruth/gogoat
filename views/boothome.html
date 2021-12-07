@@ -9,7 +9,6 @@
 
   <title>gogoat</title>
 
-  <!-- Bootstrap core CSS -->
   <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
 </head>
 
@@ -22,47 +21,147 @@
       <br>
       <div>
         <div><b>vul list</b></div>
-        <div><b>vul01 </b><a id="cmd" href="/ping?ip=127.0.0.1">cmdinject</a></div>
-        <div><b>vul02 </b><a href="/sqlxorm?key=zero">xorm sqlinject</a></div>
-        <div><b>vul03 </b><a href="/sqlraw?key=zero">rawsqlinject</a></div>
-        <div><b>vul04 </b><a href="/ssrf?url=127.0.0.1">ssrf</a></div>
-        <div><b>vul05 </b><a href="/upload">upload</a></div>
-        <div><b>vul06 </b><a href="/reflectXss?key=a">reflect xss</a></div>
-        <div><b>vul07 </b><a href="/csrf">csrf</a></div>
-        <div><b>vul08 </b><a href="/cors">cors</a></div>
-        <div><b>vul09 </b><a href="/idor">idor</a></div>
-        <div><b>vul10 </b><a href="/storexss">idor</a></div>
+        <div><b>vul01 </b><a id="cmd1"  href="/ping?ip=127.0.0.1" target="_blank">cmdinject</a></div>
+        <!-- <div><b>vul02 </b><a id="sqlxorm">xorm sqlinject</a></div> -->
+        <div><b>vul02 </b><a id="sqlxorm1" href="/sqlxorm?key=zero" target="_blank">xorm sqlinject</a></div>
+        <!-- <div><b>vul03 </b><a id="sqlraw">rawsqlinject</a></div> -->
+        <div><b>vul03 </b><a id="sqlraw1" href="/sqlraw?key=zero" target="_blank">rawsqlinject</a></div>
+        <div><b>vul04 </b><a href="/ssrf?url=https://www.baidu.com" target="_blank">ssrf</a></div>
+        <div><b>vul05 </b><a href="/csrf" target="_blank">csrf</a></div>
+        <div><b>vul06 </b><a href="/reflectXss?key=a" target="_blank">reflect xss</a></div>
+        <div><b>vul07 </b><a href="/storexss" target="_blank">storexss</a></div>
+        <!-- <div><b>vul08 </b><a href="/cors">cors</a></div> -->
+        <div><b>vul08 </b><a id="cors">cors</a></div>
+        <div><b>vul09 </b><a id="idor">idor</a></div>
+        <div><b>vul10 </b><a href="/upload" target="_blank">upload</a></div>
       </div>
     </div>
   </div>
-
+  <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
   <script src="//cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
   <script>
+
+    function buildTable(data) {
+      let table = document.createElement("table");
+      let tr = document.createElement("tr");
+      for (let i in data[6]) {
+        let th = document.createElement("th");
+        th.innerText = i;
+        tr.appendChild(th);
+      }
+      table.appendChild(tr);
+      data.forEach((value, index) => {
+        let tr = document.createElement("tr");
+        for (let index1 in data[index]) {
+          let td = document.createElement("td");
+          td.innerText = data[index][index1];
+          tr.appendChild(td);
+        }
+        table.appendChild(tr);
+      });
+      table.setAttribute("text-align", "right");
+      table.setAttribute("border", "1");
+
+      return table;
+    }
     $(document).ready(function () {
       $("#cmd").click(function () {
         $.ajax({
           type: 'GET',
           url: "/ping?ip=127.0.0.1",
-          dataType: "json",
-          data: JSON.stringify(GetJson()),
           success: function (message) {
+            var patt = /\n/g;
+            var message = message.replace(patt, "<br>");
+            var strHtml = message;
+            $("#output").html(strHtml);
           }
         });
       });
-      $(document).ajaxComplete(function () {
-        window.location = "/home"
+      $("#idor").click(function () {
+        $.ajax({
+          type: 'GET',
+          url: "/userinfo?username={{.}}",
+          success: function (message) {
+            var cc = jQuery.parseJSON(message);
+            var html = "";
+            html += "<table border=\"1\">"
+            html += "<tr>";
+            html += "<td>" + "username" + "</td>"
+            html += "<td>" + "age" + "</td>"
+            html += "<td>" + "address" + "</td>"
+            html += "<td>" + "message" + "</td>"
+            html += "</tr>";
+            for (var i in cc) {
+              html += "<tr>";
+              html += "<td>" + cc[i].username + "</td>"
+              html += "<td>" + cc[i].age + "</td>"
+              html += "<td>" + cc[i].address + "</td>"
+              html += "<td>" + cc[i].message + "</td>"
+              html += "</tr>";
+            }
+            // var data = JSON.stringify(message)
+            $("#output").html(html)
+
+          }
+        });
       });
-      function GetJson() {
-        var json = {
-          "username": $("#Username").val(),
-          "password": $("#Password").val()
-        };
-        return json;
-      }
+      $("#sqlraw").click(function () {
+        $.ajax({
+          type: 'GET',
+          url: "/sqlraw?key=zero",
+          success: function (message) {
+            var patt = /\n/g;
+            var message = message.replace(patt, "<br>");
+            var strHtml = message;
+            $("#output").html(strHtml);
+          }
+        });
+      });
+      $("#sqlxorm").click(function () {
+        $.ajax({
+          type: 'GET',
+          url: "/sqlxorm?key=zero",
+          success: function (message) {
+            var patt = /\n/g;
+            var message = message.replace(patt, "<br>");
+            var strHtml = message;
+            $("#output").html(strHtml);
+          }
+        });
+      });
+      $("#cors").click(function () {
+        $.ajax({
+          type: 'GET',
+          url: "/cors",
+          success: function (message) {
+            // var strHtml = JSON.stringify(message);
+            for (var key in message) {
+              console.log(key + "is :" + message[key]);     //获取key值
+            }
+            var html = "";
+            html += "<table border=\"1\">"
+            html += "<tr>";
+            html += "<td>" + "username" + "</td>"
+            html += "<td>" + "age" + "</td>"
+            html += "<td>" + "address" + "</td>"
+            html += "<td>" + "message" + "</td>"
+            html += "</tr>";
+            html += "<tr>";
+            html += "<td>" + message.username + "</td>"
+            html += "<td>" + message.age + "</td>"
+            html += "<td>" + message.address + "</td>"
+            html += "<td>" + message.message + "</td>"
+            html += "</tr>";
+            $("#output").html(html);
+          }
+        });
+      });
     });
   </script>
 
+  <hr>
   <div id="output"></div>
+
 </body>
 
 </html>

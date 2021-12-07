@@ -12,19 +12,27 @@ var X *xorm.Engine
 
 type User struct {
 	Id       int64  `xorm:"pk autoincr"`
-	Username string `xorm:"unique"`
+	Username string `xorm:"unique" json:"username"`
 	Salary   float64
 	Password string
-	Message  string
-	Address  string
-	Age      int64
-	IsAdmin  bool `xorm:"default false"`
+	Message  string  `json:"message"`
+	Address  string  `json:"address"`
+	Age      int64   `json:"age"`
+	IsAdmin  bool    `xorm:"default false"`
+	Amount   float64 `json:"amount"`
+	Account  string  `json:"account"`
 }
 
 type Message struct {
 	Username string
 	Name     string
 	Message  string
+}
+
+//login info,if login success ,  the field of success will be 1 else will be 0
+type LoginStatus struct {
+	Success bool
+	Err     string
 }
 
 var Config = struct {

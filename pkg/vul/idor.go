@@ -44,11 +44,13 @@ func Profile(w http.ResponseWriter, r *http.Request) {
 			w.Write([]byte("not find user"))
 			return
 		}
+		p := make([]userprofile, 0)
 		profile := &userprofile{Username: username}
 		profile.Address = user.Address
 		profile.Age = user.Age
 		profile.Message = user.Message
-		v, _ := json.Marshal(profile)
+		p = append(p, *profile)
+		v, _ := json.Marshal(p)
 		w.Write([]byte(v))
 		return
 	}
