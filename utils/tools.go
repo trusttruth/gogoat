@@ -136,6 +136,15 @@ func Validate(inter interface{}, tp string) bool {
 	return false
 }
 
+func GetUserinfo(id int64) (*User, error) {
+	user := &User{}
+	_, err := X.ID(id).Get(user)
+	if err != nil {
+		return nil, err
+	}
+	return user, nil
+}
+
 func GetDBconnStr() string {
 	configor.Load(&Config, "./config.yaml")
 	// configor.Load(&Config, "pkg/vul/config.yaml")
@@ -152,7 +161,42 @@ func GetUserpassFromDb(username string) string {
 	}
 	return pass
 }
-
+func GetUseridFromAccount(account string) int64 {
+	var id int64
+	ok, err := X.Table("user").Where("account= ?", account).Cols("id").Get(&id)
+	if err != nil || !ok {
+		fmt.Println(err)
+		return -1
+	}
+	return id
+}
+func GetUseridFromUsername(username string) int64 {
+	var id int64
+	ok, err := X.Table("user").Where("username= ?", username).Cols("id").Get(&id)
+	if err != nil || !ok {
+		fmt.Println(err)
+		return -1
+	}
+	return id
+}
+func GetUserAmount(account string) float64 {
+	var amount float64
+	ok, err := X.Table("user").Where("account= ?", account).Cols("amount").Get(&amount)
+	if err != nil || !ok {
+		fmt.Println(err)
+		return -1
+	}
+	return amount
+}
+func GetUserAmountFromUsername(username string) float64 {
+	var amount float64
+	ok, err := X.Table("user").Where("username= ?", username).Cols("amount").Get(&amount)
+	if err != nil || !ok {
+		fmt.Println(err)
+		return -1
+	}
+	return amount
+}
 func ChangePass(pass, username string) {
 	user := &User{Username: username}
 	ok, _ := X.Get(user)
