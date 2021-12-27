@@ -16,6 +16,7 @@ var ctx = context.Background()
 
 func checkPass(user, pass string) bool {
 	db := utils.GetRawDBcon()
+	defer db.Close()
 	sql := "select username from user where username = ? and password = ?"
 	passhash := utils.GetSha256(pass)
 	re, err := db.Query(sql, user, passhash)
@@ -168,7 +169,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 			if rediscon == nil {
 				panic("get redis conn err")
 			}
-			// defer rediscon.Close()
+			defer rediscon.Close()
 			// rediscon.Do("set", sessionid, username, "EX", 3600*2)
 			err := rediscon.Set(ctx, sessionid, username, 4*time.Hour).Err()
 			if err != nil {
@@ -215,7 +216,7 @@ func IsLogin(f func(http.ResponseWriter, *http.Request)) http.Handler {
 				if redisconn == nil {
 					return
 				}
-				// defer redisconn.Close()
+				defer redisconn.Close()
 				_, err := redisconn.Get(ctx, val.Value).Result()
 				// v, err := redisconn.Do("get", val.Value)
 				if err != nil {

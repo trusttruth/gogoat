@@ -1,0 +1,22 @@
+version: '3'
+
+services:
+  mysql:
+    image: mysql:5.7.24 # MySQL镜像
+    container_name: mysql # MySQL容器名称
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456 #MySQL ROOT账号密码
+    ports:
+      - 3309:3306 # 端口映射
+    volumes:
+      - /var/docker/mysql/data:/var/lib/mysql #挂载 MySQL数据
+  redis:
+    image: redis:5.0.7 # Redis镜像
+    container_name: redis # Redis容器名称
+    command: redis-server /usr/local/etc/redis/redis.conf --appendonly yes # 表示通过挂载配置文件追加配置
+    volumes:
+      - /var/docker/redis/data:/data #挂载 Redis数据
+      - /var/docker/redis/conf/redis.conf:/usr/local/etc/redis/redis.conf #挂载 Redis配置
+    ports:
+      - 6579:6379 # 端口映射

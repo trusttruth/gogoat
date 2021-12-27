@@ -13,6 +13,7 @@ func Sqlraw(w http.ResponseWriter, r *http.Request) {
 	para := r.URL.Query()
 	key := para.Get("key")
 	db := utils.GetRawDBcon()
+	defer db.Close()
 	// var sql2 = "select  name from user where 	Name= ?" //no vulable
 	var sql2 = fmt.Sprintf("select  name  from user where Name=\"%s\" ", key) //vulable
 	// res, err1 := db.Query(sql2, key)
